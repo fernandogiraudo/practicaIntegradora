@@ -3,10 +3,10 @@ import __dirname from './utils.js';
 import studentsRouter from './routes/students.router.js';
 import viewsRouter from './routes/views.router.js'
 import handlebars from 'express-handlebars';
-
+import mongoose from 'mongoose';
 const app = express();
 const PORT = 8080;
-
+const connection = mongoose.connect('URL DE MONGO AQUI')
 /**
  * Template engine
  */

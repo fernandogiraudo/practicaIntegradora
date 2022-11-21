@@ -11,10 +11,15 @@ const coursesSchema = mongoose.Schema({
         type:String,
         required:true
     },
+    teacher:{
+        type:String,
+        required:true
+    },
     students:{
         type:Array,
         default:[]
     }
 })
 
-export default coursesModel = mongoose.model(courseCollection,coursesSchema);
+const coursesModel = mongoose.model(courseCollection,coursesSchema);
+export default coursesModel;

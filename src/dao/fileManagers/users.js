@@ -8,10 +8,10 @@ import __dirname from '../../utils.js';
  * Por ello, en lugar de desarrollar todos los métodos, sólo se desarrollarán los primeros dos
  * y los más importantes (creación y lectura).
  */
-const path = __dirname+'/files/students.json'
-export default class Students{
+const path = __dirname+'/files/users.json'
+export default class Users{
     constructor(){
-        console.log(`Working with students on path: ${path}`)
+        console.log(`Working with users on path: ${path}`)
     }
     getAll = async() =>{
         if(fs.existsSync(path)){
@@ -28,20 +28,20 @@ export default class Students{
             return [];
         }
     }
-    saveStudent = async(student) =>{
+    saveUser = async(user) =>{
         try{
-            student.courses = [];
-            let students = await this.getAll();
-            if(students.length===0){//First student
-                student.id=1;
-                students.push(student)
-                await fs.promises.writeFile(path,JSON.stringify(students,null,'\t'))
+            user.courses = [];
+            let users = await this.getAll();
+            if(users.length===0){//First user
+                user.id=1;
+                users.push(user)
+                await fs.promises.writeFile(path,JSON.stringify(users,null,'\t'))
             }
             else{
-                student.id = students[students.length-1].id+1;
-                students.push(student);
-                await fs.promises.writeFile(path,JSON.stringify(students,null,'\t'));
-                return student;
+                user.id = users[users.length-1].id+1;
+                users.push(user);
+                await fs.promises.writeFile(path,JSON.stringify(users,null,'\t'));
+                return user;
             }
         }
         catch(error){

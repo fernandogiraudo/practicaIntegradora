@@ -3,6 +3,12 @@
  * con base en la persistencia. Actualmente el estudiante ya tiene noción completa del 
  * funcionamiento basado en FileSystem. El objetivo es comenzar a integrar mongoose y ver cómo
  * la persistencia puede ser cambiada, sin afectar al funcionamiento de nuestra aplicación.
+ * Por ello, es muy importante que dejes los métodos de los diferentes "Daos", con el mismo nombre,
+ * para que se pueda utilizar en eñ router.
+ * OJO, no se contempla enseñar el patrón Factory, la idea es eneseñar cómo cambiando el import podemos
+ * cambiar la persistencia, pero no estamos dinamizando la persistencia. 
+ * Sin embargo, si consideras que tienes tiempo de sobra en la clase, igual y puedes implementar los
+ * imports dinámicos para hacer el cambio de persistencia dinamizada. ¡Lo dejamos a tu criterio, según surja tu práctica integradora.
  * 
  * Te recomiendo no utilizar mucho tiempo en:
  *      °El desarrollo del dao de FileSystem, porque ésto ya se ha estado trabajando bastante.
@@ -20,6 +26,7 @@
  * las dos horas de la clase. Por lo que, según el tiempo que evalúes que te tomará, puedas 
  * comenzar la clase con el FileSystem ya hecho y explicar al estudiante que es el punto de 
  * partida que actualmente tienen desde su primera entrega de proyecto final.
+ * ¡Profe, sólo tú conoces tu ritmo de trabajo, evalúa cuánto y cómo abarcar este código!
  */
 
 

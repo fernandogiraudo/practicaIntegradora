@@ -1,8 +1,8 @@
 import mongoose from 'mongoose';
 
-const studentCollection = 'students';
+const userCollection = 'Users';
 
-const studentsSchema = new mongoose.Schema({
+const usersSchema = new mongoose.Schema({
     first_name:{
         type:String,
         required:true
@@ -11,12 +11,16 @@ const studentsSchema = new mongoose.Schema({
         type:String,
         required:true
     },
+    email:{
+        type:String,
+        required:true,
+        unique:true
+    },
     dni:Number,
-    age:Number,
+    birthDate:Date,
     gender:{
         type:String,
-        enmu:["M","F"],
-        required:true
+        enum:["M","F"]
     },
     courses:{
         type:Array,
@@ -24,4 +28,4 @@ const studentsSchema = new mongoose.Schema({
     }
 })
 
-export const studentModel = mongoose.model(studentCollection,studentsSchema);
+export const userModel = mongoose.model(userCollection,usersSchema);

@@ -5,15 +5,20 @@ export default class Users {
         console.log(`Working users with Database persistence in mongodb`)
     }
     getAll = async () => {
-        //Profe, los usuarios son tomados a partir de un mapeo para ser leídos correctamente
-        //en handlebars, puedes hacer un lean solamente en caso de que así lo desees 
-        //(como se muestra en el Manager de cursos);
-        
-        let users = await userModel.find();
+        let users = await userModel.find().populate('courses');
         return users.map(user=>user.toObject())
     }
     saveUser = async (user) => {
         let result = await userModel.create(user);
+        return result;
+    }
+    getBy = async(params) =>{
+        let result = await userModel.findOne(params).populate('courses').lean();
+        return result;
+    }
+    updateUser = async(id,user) =>{
+        delete user._id;
+        let result = await userModel.updateOne({_id:id},{$set:user})
         return result;
     }
 }

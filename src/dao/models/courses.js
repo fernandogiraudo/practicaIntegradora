@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const courseCollection = 'courses';
+const courseCollection = 'Courses';
 
 const coursesSchema = mongoose.Schema({
     title:{
@@ -16,7 +16,12 @@ const coursesSchema = mongoose.Schema({
         required:true
     },
     students:{
-        type:Array,
+        type:[
+            {
+                type:mongoose.SchemaTypes.ObjectId,
+                ref:'Users'
+            }
+        ],
         default:[]
     }
 })

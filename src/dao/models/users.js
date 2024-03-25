@@ -18,12 +18,26 @@ const usersSchema = new mongoose.Schema({
     },
     dni:Number,
     birthDate:Date,
+    password:{
+        type:String,
+        required:true
+    },
     gender:{
         type:String,
         enum:["M","F"]
     },
+    role:{
+        type:String,
+        enum: ["student","teacher"],
+        default:'student'
+    },
     courses:{
-        type:Array,
+        type:[
+            {
+                type: mongoose.SchemaTypes.ObjectId,
+                ref:'Courses'
+            }
+        ],
         default:[]
     }
 })

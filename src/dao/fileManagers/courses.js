@@ -1,13 +1,6 @@
 import fs from 'fs';
 import __dirname from '../../utils.js';
-/**
- * Recuerda que es una práctica integradora, no te esmeres demasiado en explicar a fondo un tema
- * Tu mayor fuerte en la práctica integradora será la transición de fileSystem a base de datos
- * De manera que si utilizas mucho tiempo en desarrollar estos módulos, puede que no te dé el 
- * tiempo suficiente para poder hacer las demás cosas. 
- * Por ello, en lugar de desarrollar todos los métodos, sólo se desarrollarán los primeros dos
- * y los más importantes (creación y lectura).
- */
+
 const path = __dirname+'/files/courses.json'
 export default class Courses{
     constructor(){

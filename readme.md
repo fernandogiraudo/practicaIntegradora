@@ -1,59 +1,53 @@
-¿Cómo abordar la segunda práctica integradora?
+¿Cómo abordar la tercera práctica integradora?
 
-Primero hay que analizar los puntos que ya tenemos:
+Primero, como ya será usual, toca dar un vistazo a lo que se tiene.
 
-* Un sistema de routing para cursos, usuarios y vistas.
-* Implementación de Handlebars para el manejo de plantillas.
+* Sistema de usuarios con roles "student" y "teacher".
+* Sistema de cursos
+* Acción de agregar un usuario a un curso en particular. 
+* Modelo de registro y login (realizado con passport + jwt)
 
-* Un FileSystem de usuarios y de cursos.
-* Modelos que conectan a la base de datos, para las colecciones de usuarios y cursos.
-
-* Una vista para visualizar usuarios.
-* Una vista para visualizar cursos.
-
-
-Por lo tanto, hay que centrarse en los siguientes puntos:
-
-* Modificar los modelos para que puedan trabajar con los ids de referencias de las otras colecciones e implementar búsquedas basadas en populations. Además, agregar los roles "student" y "teacher" al schema de users
-
-* Agregar la lógica para que un usuario se pueda registrar a un curso y el curso pueda ser consciente de sus usuarios estudiantes
-
-* Registro y Login con implementación de una estrategia de passport.
-
-* Creación del token con jwt + envío por cookie.
+Ergo, nuestro reto en esta práctica integradora consistirá en:
+* Reajustar la arquitectura del proyecto para funcionar a partir de ciertos patrones de diseño.
+* Aplicar variables de entorno.
+* Aplicar un sistema de políticas a partir del token de jwt
+* Enviar correos para determinadas situaciones. 
 
 Consideraciones importantes:
 
-* No perder demasiado tiempo reexplicando toda la lógica de passport, es el punto que más tiempo te quitará si te desenvuelves demasiado en él. La idea es que lo integres, mas no que se dé una clase completa de él otra vez.
-* Se te van a brindar vistas ya listas para poder hacer el envío de la información. ¡Te recomiendo ampliamente que las uses para tener el código hecho, en caso de que sientas que estás quedando corto de tiempo!
+* A estas alturas cada comisión tiene diferentes retos, a algunos se les estará complicando más el modelo de Dao, a algunos tal vez el manejo de políticas. ¡Sé creativo con tus tiempos y hazlos rendir para lo que más necesite tu clase!
+* En este punto se muestra dotenv tal como lo visto en clase, si quieres enseñar otra forma de gestionar entornos, estás en completa libertad de hacerlo.
 
 TODOS LOS CAMBIOS ESTÁN 100% testeados, por lo que se asegura que el funcionamiento será exitoso en caso de copiarse correctamente cada línea del código.
 
-A continuación, se te deja un log de los cambios completos que se han realizado. Eres libre de hacerlo en el orden que necesites, siempre y cuando tengas el tiempo para implementarlo y explicarlo correctamente.
+A continuación, se te deja un log de los cambios completos que se han realizado, el paso a paso en el cual se estructuró esta rama. Eres libre de hacerlo en el orden que necesites, siempre y cuando tengas el tiempo para implementarlo y explicarlo correctamente.
+¡Comenzamos!
 
-1. Se cambian los modelos de courses (courses.js) y users (users.js) para poder trabajar con referencias de Ids.
-2. Se implementaron nuevos métodos a los dbManagers (courses.js y users.js en carpeta dbManagers) (getBy, update, etc). Además, se configuraron para aplicar population al momento de hacer los finds(), además de modificar el modelo de users para contar con un campo password y rol
-3. Se implementó lógica para agregar al usuario al curso y viceversa (users.router.js)
-4. Se agregaron algunos usuarios y algunos cursos a la base para probar que funcione esta inserción. Además, se hace una consulta a los usuarios y a los cursos para corroborar el correcto funcionamiento de la population.
-5. Se crea una carpeta "config", y se crea un archivo passport.config.js
-6. Se agrega toda la lógica de registro, login, serializador y deserializador. Se agrega también a app.js para comenzar a utilizarse en el futuro router de sesión.
-Nota (paso 6) Notarás que la implementación se está haciendo con base en jwt, de modo que tenemos que colocar "session.false" para que funcione correctamente. En el caso de que estés utilizando express-session, deberás dejar el ajuste según se dicte en passport.
-7. Se crea router de sessions para poder agregar la ruta de registro y la ruta de login. La ruta de registro envía sólo un mensaje indicando que se finalizó el registro, mientras que el login de momento sólo accede a la propiedad req.user (se consologuea para corroborar que el proceso de login fue exitoso).
-8. Se Agrega jwt para poder crear el token a partir de req.user y se envía en una cookie. 
-9. Se configura app para que pueda funcionar con cookies, implementando el middleware de CookieParser
-10. Se corrobora que ahora el login genera correctamente el cookie y lo envía al cliente.
+1. Se crea un archivo .env para comenzar a colocar las variables de entorno. Se agregan las siguientes variables:
+    * MONGO_USER : Usuario de Mongo
+    * MONGO_PASSWORD: Password de Mongo
+    * MONGO_DATABASE: Base de datos de Mongo.
+    * JWT_COOKIE : Cookie que se envía con el token de jwt.
+    * JWT_SECRET : Secreto con el que se firma el token en jwt.
+2. Se crea un archivo config.js en la carpeta config, éste alojará todas las variables de entorno. Además, se colocará dotenv para poder cargar el archivo .env
+3. Se modifica la url de mongo en app.js para que esta vez tome las variables de entorno generadas en config.js, además, se modifica la lógica del token en sessions.js para utilizar también estas variables de entorno con jwt.
+4. Se crea una carpeta "repositories" para colocar los repositorios de usuarios y de coursos, además, se crea un archivo UserRepository.js y CoursesRepository.js para poder gestionar los repositorios.
+5. Se crea un archivo "services" en la carpeta "repositories", para poder exportar los correspondientes repositorios, además, se reajustan los archivos users.router.js, passport.config.js, courses.router.js, para poder utilizar los servicios de repository exportados del archivo services.js
+6. Se mueven TODOS los controladores a una carpeta controllers, sin romper la lógica, sólo es por limpieza de arquitectura.
+7. Se instala passport-jwt y se coloca en el passport.config una nueva estrategia "current" para poder extraer la cookie de jwt como lo visto en clases previas. Además, se configura en el mismo archivo una función CookieExtractor para funcionar con la nueva estrategia.
+8. Se agrega al controlador una función currentUser que permitirá devolver al usuario devuelto por passport, también se modifica el sessionsRouter para colocar la ruta /current y que mande a llamar el middleware de Passport.
+9. Se crea una carpeta "middleware" para colocar el middleware de autenticación, así que se crea un archivo "auth.middleware.js", éste contendrá un sistema de políticas como el visto en clases previas. 
+10. Reconfigurar las rutas de "getCourse" y "createCourse" para contar con las políticas ["PUBLIC"] y ["TEACHER"] respectivamente.
 
+11. Se crea el servicio de mailing en la carpeta services y se agregan las variables MAILING_USER, MAILING_SERVICE, MAILING_PASSWORD respectivamente.
+12. Se utiliza el servicio de mailing cuando el usuario se ha registrado a algún curso.
 ¡Hemos terminado!
 
 Te invito a que repases con detalle estos pasos para que puedas evaluar tus propios tiempos de ejecución de cada paso, al final, te servirá para qué partes ir más aceleradas, en cuales puedes tomar más tiempo o qué codigos recomiendas ya tener hechos desde el inicio de la clase (todo es un malabar de tiempos en el cual tú eres el dueño).
 
 Recuerda que también puedes evaluar los tiempos según sea el grupo, pues habrá grupos que habrán entendido muy bien passport, pero habrá otros que tal vez necesiten que se vaya más lento en esa parte. ¡Todo está pensado para ser muy flexible!
 
-Por último, algunas de estas cosas las puedes probar de manera visual, sin embargo, puedes hacerlo también sólo con Postman, ThunderClient, etc.
-
-NUEVOS IMPORTS: 
-* passport
-* passport-local
-* jsonwebtoken
-* cookie-parser
-* bcrypt
+NUEVOS IMPORTS:
+dotenv
+nodemailer
+passport-jwt

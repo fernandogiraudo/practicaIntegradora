@@ -1,11 +1,13 @@
 import passport from "passport";
 import local from 'passport-local';
-import Users from "../dao/dbManagers/users.js";
+import { userService } from "../repositories/services.js";
 import { createHash, isValidPassword} from "../utils.js";
+import jwt, { ExtractJwt } from 'passport-jwt';
+import config from "./config.js";
 
 
 const LocalStrategy = local.Strategy;
-const userService = new Users();
+const JWTStrategy = jwt.Strategy;
 
 const initializePassport = async() =>{
     passport.use('register',new LocalStrategy({passReqToCallback:true,usernameField:'email',session:false},
@@ -27,7 +29,7 @@ const initializePassport = async() =>{
                 dni,
                 password:hashedPassword
             }
-            let result = await userService.saveUser(newUser);
+            let result = await userService.createUser(newUser);
             //SI TODO SALIÓ BIEN EN LA ESTRATEGIA
             return done(null,result)
         }catch(error){
@@ -47,6 +49,18 @@ const initializePassport = async() =>{
         }
     }))
 
+    passport.use('current', new JWTStrategy({
+        jwtFromRequest: ExtractJwt.fromExtractors([cookieExtractor]),
+        secretOrKey:config.jwt.SECRET,
+    },async(jwt_payload,done)=>{
+        try{
+            return done(null,jwt_payload);
+        }catch(error){
+            return done(error);
+        }
+    }))
+
+
     passport.serializeUser((user,done)=>{
         done(null,user._id)
     })
@@ -57,4 +71,11 @@ const initializePassport = async() =>{
     })
 }
 
+const cookieExtractor = req => {
+    let token = null;
+    if(req && req.cookies) {
+        token = req.cookies[config.jwt.COOKIE]
+    }
+    return token;
+}
 export default initializePassport;

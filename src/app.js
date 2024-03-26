@@ -11,10 +11,11 @@ import mongoose from 'mongoose';
 import passport from 'passport';
 import initializePassport from './config/passport.config.js';
 import cookieParser from 'cookie-parser';
+import config from './config/config.js';
 
 const app = express();
 const PORT = 8080;
-const connection = mongoose.connect('URL DE MONGO AQUÍ :) ')
+const connection = mongoose.connect(config.mongo.URL);
 /**
  * Template engine
  */

@@ -1,24 +1,12 @@
 import { Router } from 'express';
-import Courses from '../dao/dbManagers/courses.js';
+import { createCourse, getAllCourses } from '../controllers/courses.controller.js';
+import { applyPolicies } from '../middlewares/auth.middleware.js';
+import passport from 'passport';
 
 const router = Router();
-const coursesManager = new Courses();
 
-router.get('/',async(req,res)=>{
-    let courses = await coursesManager.getAll();
-    res.send({status:"success",payload:courses})
-})
-
-router.post('/',async(req,res)=>{
-    const {title,description} = req.body;
-    let newCourse = {
-        title,
-        description,
-        users:[],
-        teacher:'sin asignar'
-    }
-    const result = await coursesManager.saveCourse(newCourse);
-    res.send({status:"success",payload:result});
-})
+router.use(passport.authenticate('current', {session: false}));
+router.get('/', applyPolicies(['PUBLIC']), getAllCourses);
+router.post('/', applyPolicies(['TEACHER']), createCourse);
 
 export default router;
